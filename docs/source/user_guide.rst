@@ -8,6 +8,6 @@ This page covers general usage of the whole software package.
    :caption: Contents:
    
    user_guide/overview
+   user_guide/rviz_config
    user_guide/params
    user_guide/gps_logger
-   
