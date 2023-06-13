@@ -3,6 +3,7 @@ build/
 cmake/
 cmake-build-debug/
 docs/doxygen/
+docs/sphinx/
 dummy_bags/
 launch/bag_demos/
 launch/rosbag-1.bag
