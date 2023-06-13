@@ -7,6 +7,7 @@ package.
 
 .. toctree::
    :caption: Contents:
+   :maxdepth: 2
    
    getting_started/physical_setup
    getting_started/software_installation

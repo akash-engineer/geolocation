@@ -16,7 +16,6 @@ To get started, refer to the following resources:
 
 For more information, see the following:
 
-* :ref:`Features`
 * :ref:`User Guide`
 * :ref:`Developer Guide`
 * :ref:`API Reference`

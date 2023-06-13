@@ -1,4 +1,0 @@
-.. _Lidar - Introduction:
-
-Introduction
-============
