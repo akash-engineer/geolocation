@@ -1,0 +1,19 @@
+<launch>
+    <!-- Launch dummy publishers to populate topics -->
+    <node name="dummy_point" pkg="geolocation" type="dummy_pt_pub" />
+    <node name="dummy_bearing" pkg="geolocation" type="dummy_bearing_pub" />
+    <node name="dummy_elevation" pkg="geolocation" type="dummy_elv_pub" />
+    <node name="dummy_gnss" pkg="geolocation" type="dummy_gnss_pub" />
+
+    <!-- Launch pose publishers and tf2 broadcasters for pose and transforms -->
+    <node name="pt_to_pose" pkg="geolocation" type="pt_to_pose_pub" />
+    <node name="track_tf2" pkg="geolocation" type="track_tf2_broadcaster" />
+    <node name="map_tf2" pkg="geolocation" type="map_tf2_broadcaster" />
+    <node name="innovusion_tf2" pkg="geolocation" type="innovusion_tf2_broadcaster" />
+
+    <!-- Launch geolocation script -->
+    <node name="geolocation" pkg="geolocation" type="geo_publisher.py" />
+
+    <!-- Launch rviz with the preconfiguration -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find geolocation)/launch/demo_pt_cloud.rviz"/>
+</launch>

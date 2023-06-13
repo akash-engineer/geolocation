@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Map View</title>
+
+  <script src="./js/maptiler-sdk.umd.js"></script>
+  <link href="./js/maptiler-sdk.css" rel="stylesheet" />
+  
+  <link href="../style.css" rel="stylesheet" />
+
+  <style>
+      body {margin: 0; padding: 0;}
+      #map {position: absolute; top: 7%; bottom: 0; width: 100%;}
+  </style>
+  
+  <script src="./js/roslib.js"></script>
+  <script>
+    var num_of_trackers;
+    var num_of_subscribers = 0;
+    var tracker_lat;
+    var tracker_lon;
+    var tracker_alt;
+
+    // Connecting to ROS
+    // -----------------
+    var ros = new ROSLIB.Ros();
+
+    // If there is an error on the backend, an 'error' emit will be emitted.
+    ros.on('error', function(error) {
+      document.getElementById('connecting').style.display = 'none';
+      document.getElementById('connected').style.display = 'none';
+      document.getElementById('closed').style.display = 'none';
+      document.getElementById('error').style.display = 'inline';
+      console.log(error);
+    });
+
+    // Find out exactly when we made a connection.
+    ros.on('connection', function() {
+      console.log('Connection made!');
+      document.getElementById('connecting').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('closed').style.display = 'none';
+      document.getElementById('connected').style.display = 'inline';
+    });
+
+    ros.on('close', function() {
+      console.log('Connection closed.');
+      document.getElementById('connecting').style.display = 'none';
+      document.getElementById('connected').style.display = 'none';
+      document.getElementById('closed').style.display = 'inline';
+    });
+
+    // Create a connection to the rosbridge WebSocket server.
+    ros.connect('ws://localhost:9090');
+
+    // Find number of trackers
+    var marker_arr_sub = new ROSLIB.Topic({
+      ros : ros,
+      name : '/marker_array',
+      messageType : 'visualization_msgs/MarkerArray'
+    });
+
+    marker_arr_sub.subscribe(function(message) {
+      num_of_trackers = message.markers.length;
+      console.log('Number of trackers: ' + num_of_trackers);
+    });
+
+    //Subscribing to a Topic
+    //----------------------
+
+    // Like when publishing a topic, we first create a Topic object with details of the topic's name
+    // and message type. Note that we can call publish or subscribe on the same topic object.
+    var listener = new ROSLIB.Topic({
+      ros : ros,
+      name : '/tracker2/gnss',
+      messageType : 'sensor_msgs/NavSatFix'
+    });
+
+    // Then we add a callback to be called every time a message is published on this topic.
+    listener.subscribe(function(message) {
+      console.log('Received message on ' + listener.name);
+      tracker_lat = message.latitude;
+      tracker_lon = message.longitude;
+      tracker_alt = message.altitude;
+
+      // If desired, we can unsubscribe from the topic as well.
+      // listener.unsubscribe();
+    });
+  </script>
+</head>
+
+<body>
+  <div id="navbar" display="flex">
+    <div id="header-title">
+      <h1>3D Map</h1>
+    </div>
+    <div id="rosbridge-status">
+      <p id="connecting">
+        Connecting to rosbridge...
+      </p>
+      <p id="connected" style="color:#00D600; display:none">
+        Connected
+      </p>
+      <p id="error" style="color:#FF0000; display:none">
+        Error in the backend!
+      </p>
+      <p id="closed" style="display:none">
+        Connection closed.
+      </p>
+    </div>
+  </div>
+  
+  <script src="./js/three.min.js"></script>
+  <script src="./js/GLTFLoader.js"></script>
+  <div id="map">
+    <script>
+    maptilersdk.config.apiKey = 'Jjjb4yKoPaBPVQ3T8Sso';
+    var map = new maptilersdk.Map({
+        style: maptilersdk.MapStyle.STREETS,
+        center: [103.62129, 1.2654],
+        zoom: 17.5,
+        pitch: 60,
+        bearing: 45,
+        container: 'map',
+        antialias: true
+    });
+
+    var modelTransform;
+
+    // The 'building' layer in the streets vector source contains building-height
+    // data from OpenStreetMap.
+    map.on('load', function () {
+        // Insert the layer beneath any symbol layer.
+        var layers = map.getStyle().layers;
+
+        var labelLayerId;
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+                labelLayerId = layers[i].id;
+                break;
+            }
+        }
+
+        map.loadImage(
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Breezeicons-devices-22-uav-quadcopter.svg/240px-Breezeicons-devices-22-uav-quadcopter.svg.png',
+          function (error, image) {
+            if (error) throw error;
+            map.addImage('drone', image);
+          }
+        )
+
+        window.setInterval(function () {
+          const data = {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Point",
+                  "coordinates": [
+                    tracker_lon,
+                    tracker_lat,
+                    tracker_alt
+                  ]
+                }
+              }
+            ]
+          }
+          map.getSource('tracker').setData(data)
+          console.log("data updated")
+
+          var modelOrigin = [tracker_lon, tracker_lat];
+          var modelAltitude = tracker_alt;
+          var modelRotate = [Math.PI / 2, 0, 0];
+
+          var modelAsMercatorCoordinate = maptilersdk.MercatorCoordinate.fromLngLat(
+            modelOrigin,
+            modelAltitude
+          );
+
+          // transformation parameters to position, rotate and scale the 3D model onto the map
+          modelTransform = {
+            translateX: modelAsMercatorCoordinate.x,
+            translateY: modelAsMercatorCoordinate.y,
+            translateZ: modelAsMercatorCoordinate.z,
+            rotateX: modelRotate[0],
+            rotateY: modelRotate[1],
+            rotateZ: modelRotate[2],
+            scale: modelAsMercatorCoordinate.meterInMercatorCoordinateUnits()
+          }
+        }, 50)
+
+        var THREE = window.THREE;
+
+        // configuration of the custom layer for a 3D model per the CustomLayerInterface
+        var customLayer = {
+          id: '3d-model',
+          type: 'custom',
+          renderingMode: '3d',
+          onAdd: function (map, gl) {
+            this.camera = new THREE.Camera();
+            this.scene = new THREE.Scene();
+
+            // create two three.js lights to illuminate the model
+            var directionalLight = new THREE.DirectionalLight(0xffffff);
+            directionalLight.position.set(0, -70, 100).normalize();
+            this.scene.add(directionalLight);
+
+            var directionalLight2 = new THREE.DirectionalLight(0xffffff);
+            directionalLight2.position.set(0, 70, 100).normalize();
+            this.scene.add(directionalLight2);
+
+            // use the three.js GLTF loader to add the 3D model to the three.js scene
+            var loader = new THREE.GLTFLoader();
+            loader.load(
+                'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Cube/glTF/Cube.gltf',
+                function (gltf) {
+                    this.scene.add(gltf.scene);
+                }.bind(this)
+            );
+            this.map = map;
+
+            // use the map canvas for three.js
+            this.renderer = new THREE.WebGLRenderer({
+                canvas: map.getCanvas(),
+                context: gl,
+                antialias: true
+            });
+
+            this.renderer.autoClear = false;
+          },
+          render: function (gl, matrix) {
+            var rotationX = new THREE.Matrix4().makeRotationAxis(
+                new THREE.Vector3(1, 0, 0),
+                modelTransform.rotateX
+            );
+            var rotationY = new THREE.Matrix4().makeRotationAxis(
+                new THREE.Vector3(0, 1, 0),
+                modelTransform.rotateY
+            );
+            var rotationZ = new THREE.Matrix4().makeRotationAxis(
+                new THREE.Vector3(0, 0, 1),
+                modelTransform.rotateZ
+            );
+
+            var m = new THREE.Matrix4().fromArray(matrix);
+            var l = new THREE.Matrix4()
+                .makeTranslation(
+                    modelTransform.translateX,
+                    modelTransform.translateY,
+                    modelTransform.translateZ
+                )
+                .scale(
+                    new THREE.Vector3(
+                        modelTransform.scale,
+                        -modelTransform.scale,
+                        modelTransform.scale
+                    )
+                )
+                .multiply(rotationX)
+                .multiply(rotationY)
+                .multiply(rotationZ);
+
+            this.camera.projectionMatrix = m.multiply(l);
+            this.renderer.state.reset();
+            this.renderer.render(this.scene, this.camera);
+            this.map.triggerRepaint();
+          }
+        };
+
+        map.addSource('tracker', {
+          type: 'geojson',
+          data: {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        })
+
+        map.addLayer(
+            {
+                'id': '3d-buildings',
+                'source': 'openmaptiles',
+                'source-layer': 'building',
+                'filter': ['==', 'extrude', 'true'],
+                'type': 'fill-extrusion',
+                'minzoom': 15,
+                'paint': {
+                    'fill-extrusion-color': '#aaa',
+
+                    // use an 'interpolate' expression to add a smooth transition effect to the
+                    // buildings as the user zooms in
+                    'fill-extrusion-height': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        15,
+                        0,
+                        15.05,
+                        ['get', 'height']
+                    ],
+                    'fill-extrusion-base': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        15,
+                        0,
+                        15.05,
+                        ['get', 'min_height']
+                    ],
+                    'fill-extrusion-opacity': 0.6
+                }
+            },
+            labelLayerId
+        );
+
+        map.addLayer({
+          'id': 'tracker',
+          'type': 'symbol',
+          'source': 'tracker',
+          'layout': {
+            'icon-image': 'drone',
+            'icon-size': 0.1
+          }
+        })
+
+        map.addLayer(customLayer);
+
+        map.on('click', 'customLayer', function(e) {
+          new maptilersdk.Popup()
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML('<h3>Tracker</h3><p>Latitude: ' + tracker_lat + '</p><p>Longitude: ' + tracker_lon + '</p><p>Altitude: ' + tracker_alt + '</p>')
+            .addTo(map);
+        })
+
+        map.on('click', 'tracker', function(e) {
+          new maptilersdk.Popup()
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML('<h3>Tracker</h3><p>Latitude: ' + tracker_lat + '</p><p>Longitude: ' + tracker_lon + '</p><p>Altitude: ' + tracker_alt + '</p>')
+            .addTo(map);
+        })
+
+    });
+    </script>
+  </div>
+</body>
+</html>

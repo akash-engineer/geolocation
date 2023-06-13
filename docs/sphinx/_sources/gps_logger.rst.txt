@@ -1,0 +1,4 @@
+.. _gps_logger:
+
+Using a GPS Logger
+==================

@@ -1,0 +1,6 @@
+rate: 30
+ground_height: 0
+
+innovusion_tf_r: rad(-pi/2)
+innovusion_tf_p: rad(-pi/2)
+innovusion_tf_y: 0.0

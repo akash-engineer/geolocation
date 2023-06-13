@@ -1,0 +1,5 @@
+dummy_bearing: rad(pi/180*2)
+dummy_elevation: rad(pi/180*0)
+dummy_longitude: 103.621015
+dummy_latitude: 1.265246
+dummy_altitude: 8

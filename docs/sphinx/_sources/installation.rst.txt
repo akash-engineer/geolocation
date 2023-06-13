@@ -1,0 +1,19 @@
+.. _Installation:
+
+Installation
+============
+
+Dependencies
+------------
+The ``geolocation`` package depends on the following packages:
+
+* rviz_satellite_
+
+Install all dependencies before installing ``geolocation``.
+
+Installation
+------------
+To install ``geolocation``, copy the entire package to your ``src`` folder in
+your catkin workspace. Then, run ``catkin_make`` from your workspace root.
+
+.. _rviz_satellite: https://github.com/nobleo/rviz_satellite

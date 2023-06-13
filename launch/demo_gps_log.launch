@@ -1,0 +1,13 @@
+<launch>
+    <!-- Set parameters for geolocation scripts -->
+    <param name="marker_array_topic" type="string" value="/marker_array" />
+
+    <!-- Launch pose publishers and tf2 broadcasters for pose and transforms -->
+    <node name="map_tf2" pkg="geolocation" type="map_tf2_broadcaster" />
+
+    <!-- Launch geolocation script -->
+    <node name="geolocation" pkg="geolocation" type="geo_publisher.py" args="0" output="screen" />
+
+    <!-- Launch rviz with the preconfiguration -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find geolocation)/launch/demo.rviz" required="true" />
+</launch>

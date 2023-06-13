@@ -1,0 +1,6 @@
+gnss_topic: "/sensor_pose/gnss"
+elevation_topic: "/sensor_pose/elevation"
+bearing_topic: "/sensor_pose/bearing"
+roll_topic: "/sensor_pose/roll"
+marker_array_topic: "/object3d_detector/markers"
+point_cloud_topic: "/iv_points"

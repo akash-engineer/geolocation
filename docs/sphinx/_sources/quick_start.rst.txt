@@ -1,0 +1,52 @@
+.. _Quick Start:
+
+Quick Start
+===========
+
+This is a quick start guide to get you up and running with the
+``geolocation`` package. Before continuing, make sure the package
+has been installed correctly. See the :ref:`installation` section
+for more information.
+
+.. _Quick Start - Verify Install:
+
+Verify Install
+--------------
+
+The package contains a launch file for demonstration purposes. Use
+it to verify your installation:
+
+.. code-block:: bash
+
+    roslaunch geolocation demo.launch
+
+The launch file will fake a GPS position in South Tuas, Singapore and
+display the position in RViz using OpenStreetMaps. The fake GPS position
+can be edited in ``/config/dummy_params.yaml``.
+
+.. _Quick Start - Usage:
+
+Usage
+-----
+
+To get started using ``geolocation`` in a live environment, run the
+following command:
+
+.. code-block:: bash
+
+    roslaunch geolocation live.launch
+
+This will launch the ``geolocation`` package with the default
+configuration. The default configuration can be found in
+``/config/ros_params.yaml`` and ``/config/topic_names.yaml``.
+
+This launch command has one optional argument: ``dummy_gnss``.
+Passing this argument as ``True`` will pass a static GNSS
+coordinate to the program if a live GNSS coordinate cannot
+be provided. 
+
+.. code-block:: bash
+
+    roslaunch geolocation live.launch dummy_gnss:="True"
+
+The coordinates can be changes in ``/config/dummy_params.yaml``.

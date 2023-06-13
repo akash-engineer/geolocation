@@ -1,0 +1,10 @@
+This is a test page
+===================
+
+Hello world!
+
+This a test of autodoc for the point_transform function.
+
+.. autofunction:: geo_publisher.point_transform
+    :noindex:
+
