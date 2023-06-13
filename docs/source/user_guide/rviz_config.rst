@@ -66,4 +66,51 @@ This display controls the map that is rendered on the ground plane in rviz.
     is ``/sensor_pose/gnss``.
 
 * Map transform type:
-    
+    This should be set to ``NavSatFix Massages and Map Frame``. The rviz_satellite
+    package also supports using UTM coordinates, but this package does not, so
+    this option should not be used.
+
+* Map frame:
+    This should be set to ``map``. This is the frame that the map will be
+    rendered in.
+
+TF
+^^^^
+This display shows the transform tree. It is useful for debugging, but should not
+need to be adjusted for normal operation.
+
+PointCloud2
+^^^^^^^^^^^
+This display shows the point cloud data from the LiDAR sensor. It is one of
+the most important displays in rviz, and should be enabled.
+
+MarkerArray
+^^^^^^^^^^^
+This display shows the detected objects. It is one of the most important
+displays in rviz, and should be enabled.
+
+
+Views
+-----
+The right hand side of the rviz window is the Views panel. This is where you
+can change the camera settings. This panel is hidden by default, but can be
+opened by clicking the arrow on the right hand side of the window.
+
+Most of the settings in this window can be adjusted by clicking and dragging
+the mouse in the main rviz window. The following settings are the most important:
+
+* Type:
+    This should be set to ``FrameAligned``. The fixed frame must be set to the
+    ``innovusion`` frame for the PointCloud2 to be visualised, but it is not
+    aligned with the world, so this setting should be used to align the camera
+    with the world.
+
+* Near Clip Distance:
+    This should be set to ``0.01``. Setting this to a value higher than 0.1 will
+    cause objects that are close to the camera to be clipped.
+
+* Target Frame:
+    This should be set to ``base_link``. This is the frame that the camera will
+    be aligned with by default. A transform has already been applied from the
+    ``base_link`` frame to the ``innovusion`` frame, so this setting should not
+    be changed.
