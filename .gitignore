@@ -1,0 +1,10 @@
+.vscode/
+build/
+cmake/
+cmake-build-debug/
+docs/doxygen/
+dummy_bags/
+launch/bag_demos/
+launch/rosbag-1.bag
+launch/rosbag-2.bag
+launch/rosbag-3.bag
