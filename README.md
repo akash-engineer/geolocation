@@ -1,6 +1,6 @@
 # Geolocation
 
-ROS package for calculating GNSS coordinates of points in a frame with known GNSS coordinats and pose.
+ROS package for calculating GNSS coordinates of points in a frame with known GNSS coordinates and pose.
 
 This package was designed for Ubuntu 20.04 and ROS Noetic
 
