@@ -14,3 +14,4 @@ regenerated in quite a while so you might get stuck.
 
    dev_guide/gnss_coordinates
    dev_guide/docs_guide
+   dev_guide/feature_requests
