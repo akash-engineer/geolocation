@@ -15,15 +15,6 @@ from std_msgs.msg import Float32
 from visualization_msgs.msg import MarkerArray
 from sensor_msgs.msg import NavSatFix
 
-# Global Variables
-
-MARKER_ARRAY = MarkerArray()
-SENSOR_LAT = 0
-SENSOR_LON = 0
-SENSOR_ALTITUDE = 0
-SENSOR_BEARING = 0
-SENSOR_ELEVATION = 0
-
 # Geolocation functions
 
 def point_transform(point, bearing, elevation):
@@ -119,87 +110,102 @@ def find_point_gnss(start_lat, start_lon, nadir_dist, point_bearing):
 
 
 # ROS-related functions
-def marker_array_callback(data):
-    """Callback function for the /track/marker_array topic. Updates the global variable MARKER_ARRAY.
-
-    :param data: MarkerArray message from the /track/marker_array topic
-    :type data: MarkerArray
+class SensorGnss:
     """
-    global MARKER_ARRAY
-    MARKER_ARRAY = data
-
-
-def gnss_callback(data):
-    """Callback function for the /sensor_pose/gnss topic. Updates the global variables SENSOR_LAT, SENSOR_LON and SENSOR_ALTITUDE.
-
-    :param data: NavSatFix message from the /sensor_pose/gnss topic
-    :type data: NavSatFix
+    Class for storing the GNSS coordinates of the sensor
     """
-    global SENSOR_LAT, SENSOR_LON, SENSOR_ALTITUDE
-    SENSOR_LAT = data.latitude
-    SENSOR_LON = data.longitude
-    SENSOR_ALTITUDE = data.altitude
 
 
-def bearing_callback(data):
-    """Callback function for the /sensor_pose/bearing topic. Updates the global variable SENSOR_BEARING.
+    def __init__(self):
+        self.marker_array = MarkerArray()
+        self.sensor_lat = 0
+        self.sensor_lon = 0
+        self.sensor_altitude = 0
+        self.sensor_bearing = 0
+        self.sensor_elevation = 0
 
-    :param data: Float32 message from the /sensor_pose/bearing topic
-    :type data: Float32
-    """
-    global SENSOR_BEARING
-    SENSOR_BEARING = data.data
+    def marker_array_callback(self, data):
+        """Callback function for the /track/marker_array topic.
+        Updates the global variable marker_array.
 
-
-def elevation_callback(data):
-    """Callback function for the /sensor_pose/elevation topic. Updates the global variable SENSOR_ELEVATION.
-
-    :param data: Float32 message from the /sensor_pose/elevation topic
-    :type data: Float32
-    """
-    global SENSOR_ELEVATION
-    SENSOR_ELEVATION = data.data
+        :param data: MarkerArray message from the /track/marker_array topic
+        :type data: MarkerArray
+        """
+        self.marker_array = data
 
 
-def multi_track_publisher():
-    """Publishes the GNSS coordinates of multiple points to the /track/gnss topic
+    def gnss_callback(self, data):
+        """Callback function for the /sensor_pose/gnss topic.
+        Updates the global variables sensor_lat, sensor_lon and sensor_altitude.
 
-    Loops through each marker in MARKER_ARRAY and publishes the GNSS coordinates of the point to the /tracker<X>/gnss topic.
-    Creates and destroys topics as the number of markers in MARKER_ARRAY changes.
-    """
-    ros_rate = 30
-    rospy.get_param("/ros_rate", ros_rate)
-    rate = rospy.Rate(ros_rate)
-    while not rospy.is_shutdown():
-        array_len = len(MARKER_ARRAY.markers)
-        for i in range(array_len):
-            try:
-                tracker_topic = "tracker" + str(i) + "/gnss"
-                pub = rospy.Publisher(tracker_topic, NavSatFix, queue_size=10)
-                point = np.array([MARKER_ARRAY.markers[i].pose.position.x,
-                                MARKER_ARRAY.markers[i].pose.position.y,
-                                MARKER_ARRAY.markers[i].pose.position.z])
-                point_tf = point_transform(point, SENSOR_BEARING, SENSOR_ELEVATION)
-                point_bearing = find_point_bearing(point_tf)
-                nadir_dist = find_nadir_dist(point_tf)
+        :param data: NavSatFix message from the /sensor_pose/gnss topic
+        :type data: NavSatFix
+        """
+        self.sensor_lat = data.latitude
+        self.sensor_lon = data.longitude
+        self.sensor_altitude = data.altitude
 
-                track_lat, track_lon = find_point_gnss(SENSOR_LAT,
-                                                    SENSOR_LON,
-                                                    nadir_dist,
-                                                    point_bearing)
-                point_altitude = point_tf[2]
 
-                track = NavSatFix()
-                track.header.stamp = rospy.Time.now()
-                track.header.frame_id = 'track_pose'
-                track.latitude = track_lat
-                track.longitude = track_lon
-                track.altitude = point_altitude
-                pub.publish(track)
-            except IndexError:
-                break
+    def bearing_callback(self, data):
+        """Callback function for the /sensor_pose/bearing topic.
+        Updates the global variable sensor_bearing.
 
-        rate.sleep()
+        :param data: Float32 message from the /sensor_pose/bearing topic
+        :type data: Float32
+        """
+        self.sensor_bearing = data.data
+
+
+    def elevation_callback(self, data):
+        """Callback function for the /sensor_pose/elevation topic.
+        Updates the global variable sensor_elevation.
+
+        :param data: Float32 message from the /sensor_pose/elevation topic
+        :type data: Float32
+        """
+        self.sensor_elevation = data.data
+
+
+    def multi_track_publisher(self):
+        """Publishes the GNSS coordinates of multiple points to the /track/gnss topic
+
+        Loops through each marker in marker_array and publishes the GNSS coordinates
+        of the point to the /tracker<X>/gnss topic.
+        Creates and destroys topics as the number of markers in marker_array changes.
+        """
+        ros_rate = 30
+        rospy.get_param("/ros_rate", ros_rate)
+        rate = rospy.Rate(ros_rate)
+        while not rospy.is_shutdown():
+            array_len = len(self.marker_array.markers)
+            for i in range(array_len):
+                try:
+                    tracker_topic = "tracker" + str(i) + "/gnss"
+                    pub = rospy.Publisher(tracker_topic, NavSatFix, queue_size=10)
+                    point = np.array([self.marker_array.markers[i].pose.position.x,
+                                    self.marker_array.markers[i].pose.position.y,
+                                    self.marker_array.markers[i].pose.position.z])
+                    point_tf = point_transform(point, self.sensor_bearing, self.sensor_elevation)
+                    point_bearing = find_point_bearing(point_tf)
+                    nadir_dist = find_nadir_dist(point_tf)
+
+                    track_lat, track_lon = find_point_gnss(self.sensor_lat,
+                                                        self.sensor_lon,
+                                                        nadir_dist,
+                                                        point_bearing)
+                    point_altitude = point_tf[2]
+
+                    track = NavSatFix()
+                    track.header.stamp = rospy.Time.now()
+                    track.header.frame_id = 'track_pose'
+                    track.latitude = track_lat
+                    track.longitude = track_lon
+                    track.altitude = point_altitude
+                    pub.publish(track)
+                except IndexError:
+                    break
+
+            rate.sleep()
 
 
 if __name__ == '__main__':
@@ -212,12 +218,15 @@ if __name__ == '__main__':
     ELEVATION_TOPIC = rospy.get_param("/elevation_topic")
 
     rospy.init_node('geo_publisher', anonymous=True)
-    rospy.Subscriber(MARKER_ARRAY_TOPIC, MarkerArray, marker_array_callback)
-    rospy.Subscriber(GNSS_TOPIC, NavSatFix, gnss_callback)
-    rospy.Subscriber(BEARING_TOPIC, Float32, bearing_callback)
-    rospy.Subscriber(ELEVATION_TOPIC, Float32, elevation_callback)
+
+    sensor_gnss = SensorGnss()
+
+    rospy.Subscriber(MARKER_ARRAY_TOPIC, sensor_gnss.MarkerArray, sensor_gnss.marker_array_callback)
+    rospy.Subscriber(GNSS_TOPIC, NavSatFix, sensor_gnss.gnss_callback)
+    rospy.Subscriber(BEARING_TOPIC, Float32, sensor_gnss.bearing_callback)
+    rospy.Subscriber(ELEVATION_TOPIC, Float32, sensor_gnss.elevation_callback)
 
     try:
-        multi_track_publisher()
+        sensor_gnss.multi_track_publisher()
     except rospy.ROSInterruptException:
         pass
