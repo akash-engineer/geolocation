@@ -1,0 +1,4 @@
+lidar_config/ip : "172.168.1.10"
+lidar_config/port : 8001
+lidar_config/use_tcp : false
+lidar_config/udp_port : 0
