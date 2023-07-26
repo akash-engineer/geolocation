@@ -1,0 +1,254 @@
+/**
+ *  Copyright (C) 2021 - Innovusion Inc.
+ *
+ *  All Rights Reserved.
+ *
+ *  $Id$
+ */
+
+#ifndef SDK_COMMON_INNO_FAULTS_COMMON_H_
+#define SDK_COMMON_INNO_FAULTS_COMMON_H_
+
+#include <stdlib.h>
+#include <unordered_set>
+#include "sdk_common/inno_lidar_packet.h"
+
+namespace innovusion {
+enum InnoFaultOperation {
+  INNO_FAULT_OPERATION_NONE = 0,
+  INNO_FAULT_OPERATION_SET = 1,
+  INNO_FAULT_OPERATION_HEAL = 2,
+  INNO_FAULT_OPERATION_MAX
+};
+
+enum InnoFaultState {
+    INNO_DIAG_INIT = 0,
+    INNO_DIAG_DEBOUNCING = 1,
+    INNO_DIAG_FAULT_SET = 2,
+    INNO_DIAG_FAULT_HEAL = 3,
+    INNO_DIAG_FAULT_MAX = 4
+};
+
+enum ConfidenceLevel {
+  INNO_CONFIDENCE_LEVEL_NONE = 0,
+  INNO_CONFIDENCE_LEVEL_LOW = 1,
+  INNO_CONFIDENCE_LEVEL_HIGH = 2,
+  INNO_CONFIDENCE_LEVEL_FULL = 3,
+  INNO_CONFIDENCE_LEVEL_MAX
+};
+
+enum ProcessStage {
+  INNO_PROCESS_STAGE_READ = 0,
+  INNO_PROCESS_STAGE_DELIVER = 1,
+  INNO_PROCESS_STAGE_MAX = 2
+};
+
+enum InnoSubInFaults {
+  INNO_SUB_FAULT_BASE = INNO_LIDAR_IN_FAULT_MAX + 64,  // first sub-fault
+  INNO_SUB_FAULT_OPTIC1_0,  // CHA
+  INNO_SUB_FAULT_OPTIC1_1,  // CHB
+  INNO_SUB_FAULT_OPTIC1_2,  // CHC
+  INNO_SUB_FAULT_OPTIC1_3,  // CHD
+  INNO_SUB_FAULT_OPTIC1_4,  // all channels
+  INNO_SUB_FAULT_OPTIC2_0,
+  INNO_SUB_FAULT_OPTIC2_1,
+  INNO_SUB_FAULT_OPTIC2_2,
+  INNO_SUB_FAULT_OPTIC2_3,
+  INNO_SUB_FAULT_EXCESSIVE_NOISE_0,  // phase 0
+  INNO_SUB_FAULT_EXCESSIVE_NOISE_1,  // phase 1
+  INNO_SUB_FAULT_REFINTENSITY0,  // consistency check
+  INNO_SUB_FAULT_REFINTENSITY4,  // 4 channel check
+  INNO_SUB_FAULT_REFINTENSITY1_0,  // channel A
+  INNO_SUB_FAULT_REFINTENSITY1_1,  // channel B
+  INNO_SUB_FAULT_REFINTENSITY1_2,  // channel C
+  INNO_SUB_FAULT_REFINTENSITY1_3,  // channel D
+  INNO_SUB_FAULT_MAX
+};
+
+struct InnoInFaults {
+  const char* name;
+  enum ConfidenceLevel conf_level;
+  uint32_t mode_inhibit_mask;
+  uint64_t fault_inhibit_mask;  // inhibiting other faults
+};
+
+static const struct InnoInFaults Inno_faults_def[INNO_LIDAR_IN_FAULT_MAX] = {
+  {"INNO_LIDAR_IN_FAULT_OTHER",              INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POWER_LOW",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POWER_HIGH",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_WINDOW_BLOCKAGE1",   INNO_CONFIDENCE_LEVEL_LOW,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_WINDOW_BLOCKAGE2",   INNO_CONFIDENCE_LEVEL_NONE,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_WINDOW_BLOCKAGE3",   INNO_CONFIDENCE_LEVEL_LOW,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_WINDOW_BLOCKAGE4",   INNO_CONFIDENCE_LEVEL_NONE,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_LASER_INTERLOCK",    INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_COMM_LASER",         INNO_CONFIDENCE_LEVEL_NONE, 0, ((1UL << INNO_LIDAR_IN_FAULT_OPTIC1) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC2) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC1_F) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC2_F) | (1UL << INNO_LIDAR_IN_FAULT_REFINTENSITY))},  // NOLINT
+  {"INNO_LIDAR_IN_FAULT_LASER",              INNO_CONFIDENCE_LEVEL_NONE, 0, ((1UL << INNO_LIDAR_IN_FAULT_OPTIC1) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC2) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC1_F) | (1UL << INNO_LIDAR_IN_FAULT_OPTIC2_F) | (1UL << INNO_LIDAR_IN_FAULT_REFINTENSITY))},  // NOLINT
+  {"INNO_LIDAR_IN_FAULT_COMM_DSP",           INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_CANFD_DSP",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DSP",                INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POLYGON_CONTROL",    INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POLYGON_SENSOR",     INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_GALVO_CONTROL",      INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_GALVO_SENSOR",       INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OPTIC1",             INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OPTIC2",             INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_IIC_DSP",            INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_IIC_SOC",            INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DSP_EXTWD",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DBTEMP",             INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_CHIPTEMP",           INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_HUMIDITY",           INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_COMM_ADC",           INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_FPGACLOCK",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_SOC",                INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_SOC_EXTWD",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_RAWDATA_STREAM",     INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POLYGON_TO",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_GALVO_TO",           INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_TRIGGER_TO",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POWSUPL1",           INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_POWSUPL2",           INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_LPDDR4",             INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_FLASH",              INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_NETWORK1",           INNO_CONFIDENCE_LEVEL_FULL,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_NETWORK2",           INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OVERHEAT1",          INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OVERHEAT2",          INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OVERHEAT3",          INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_CONFIG1",            INNO_CONFIDENCE_LEVEL_LOW,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_CONFIG2",            INNO_CONFIDENCE_LEVEL_LOW,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_ASSERT_FAILURE",     INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_CPULOAD_HIGH",       INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_LATENCY_LONG",       INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DATA_DROP4",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_RAWDATA_TO",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_EXCESSIVE_NOISE",    INNO_CONFIDENCE_LEVEL_LOW,
+    (1U << INNO_LIDAR_MODE_WORK_CALIBRATION), 0},
+  {"INNO_LIDAR_IN_FAULT_DATA_DROP1",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DATA_DROP2",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_DATA_DROP3",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_TEMPHIGH_INHIBIT",            INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OPTIC1_F",           INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_REFINTENSITY",       INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_REPROGRAMMING",      INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_GALVO_MIRROR",       INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_MAX_DISTANCE",       INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_GALVO_OFFSET",       INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_OPTIC2_F",           INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_RESERVED16",         INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_RESERVED17",         INNO_CONFIDENCE_LEVEL_NONE,
+    0, 0},
+  {"INNO_LIDAR_IN_FAULT_RESERVED18",         INNO_CONFIDENCE_LEVEL_FULL,
+    0, 0}
+};
+
+typedef void* (*OnFaultCallback) (void* context,
+                                  enum InnoFaultOperation operation);
+
+class Subscriber {
+ public:
+  Subscriber() {
+  }
+  virtual ~Subscriber() {
+  }
+
+  virtual void update(void* content) = 0;
+};
+
+class Publisher {
+ public:
+  Publisher() {
+    subscribers_.clear();
+  }
+  virtual ~Publisher() {
+    while (1) {
+      std::unordered_set<Subscriber*>::iterator it = subscribers_.begin();
+      if (it == subscribers_.end()) {
+        break;
+      }
+      remove_subscriber(*it);
+    }
+  }
+
+  void add_subscriber(Subscriber* subscriber) {
+    if (subscriber == NULL) {
+      return;
+    }
+    std::unique_lock<std::mutex> lk(mutex_);
+    subscribers_.insert(subscriber);
+  }
+  void remove_subscriber(Subscriber* subscriber) {
+    std::unique_lock<std::mutex> lk(mutex_);
+    subscribers_.erase(subscriber);
+  }
+
+ protected:
+  virtual void notify_subscriber_(void* content) = 0;
+
+ protected:
+  std::unordered_set<Subscriber*> subscribers_;
+  std::mutex mutex_;
+};
+
+}  // namespace innovusion
+
+#endif  // SDK_COMMON_INNO_FAULTS_COMMON_H_
