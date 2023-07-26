@@ -28,4 +28,6 @@ For more information, see the following:
    getting_started
    user_guide
    dev_guide
-   reference
+   api_reference
+   lidar
+   lidar/Introduction
