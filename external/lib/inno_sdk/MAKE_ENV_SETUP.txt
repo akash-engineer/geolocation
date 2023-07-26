@@ -1,0 +1,16 @@
+sudo apt install make
+sudo apt install python
+sudo apt install clang
+sudo apt install gcc
+sudo apt install g++
+sudo apt install libssl-dev
+sudo apt install python-dev
+sudo apt install python3-dev
+sudo apt install libeigen3-dev
+sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+sudo apt install libpcap-dev
+sudo apt install libboost-dev libboost-all-dev
+
+#install ros melodic
+http://wiki.ros.org/melodic/Installation/Ubuntu
+https://answers.ros.org/question/325039/apt-update-fails-cannot-install-pkgs-key-not-working/

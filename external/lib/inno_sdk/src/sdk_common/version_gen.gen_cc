@@ -1,0 +1,9 @@
+/**
+ *  Copyright (C) 2021 - Innovusion Inc.
+ *
+ *  All Rights Reserved.
+ *
+ */
+
+const static char inno_api_version_g[] = "2.3.0.20220928091430";
+const static char inno_api_build_tag_g[] = "release-2.8.1-rc4";
