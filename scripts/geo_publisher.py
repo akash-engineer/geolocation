@@ -117,11 +117,25 @@ class SensorGnss:
 
 
     def __init__(self):
+        """Initializes the global variables
+        """
+
+        ## MarkerArray message from the /track/marker_array topic
         self.marker_array = MarkerArray()
+
+        ## Lattitude of the sensor in degrees
         self.sensor_lat = 0
+
+        ## Longitude of the sensor in degrees
         self.sensor_lon = 0
+
+        ## Altitude of the sensor in meters
         self.sensor_altitude = 0
+
+        ## Bearing of the sensor in degrees
         self.sensor_bearing = 0
+
+        ## Elevation of the sensor in degrees
         self.sensor_elevation = 0
 
     def marker_array_callback(self, data):
@@ -212,13 +226,19 @@ if __name__ == '__main__':
 
     print("Geolocation node started")
 
+    ## ROS topic for the MarkerArray message
     MARKER_ARRAY_TOPIC = rospy.get_param("/marker_array_topic")
+    ## ROS topic for the NavSatFix message
     GNSS_TOPIC = rospy.get_param("/gnss_topic")
+    ## ROS topic for the Float32 message
     BEARING_TOPIC = rospy.get_param("/bearing_topic")
+    ## ROS topic for the Float32 message
     ELEVATION_TOPIC = rospy.get_param("/elevation_topic")
 
+    ## Initializes the ROS node
     rospy.init_node('geo_publisher', anonymous=True)
 
+    ## SensorGnss object
     sensor_gnss = SensorGnss()
 
     rospy.Subscriber(MARKER_ARRAY_TOPIC, sensor_gnss.MarkerArray, sensor_gnss.marker_array_callback)

@@ -18,9 +18,13 @@
 #include <std_msgs/Float32.h>
 #include <math.h>
 
+ /*! Bearing of the sensor in degrees */
 float bearing = 0;
+/*! Elevation of the sensor in degrees */
 float elevation = 0;
+/*! Roll of the sensor in degrees */
 float roll = 0;
+/*! Altitude of the sensor in meters */
 float altitude = 0;
 
 /**
@@ -63,6 +67,11 @@ void gnssCallback(const sensor_msgs::NavSatFixConstPtr &sensor_gnss)
     altitude = sensor_gnss->altitude;
 }
 
+/**
+ * @brief Main function that broadcasts the transform from map to base_link
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char** argv){
     ros::init(argc, argv, "map_tf2_broadcaster");
 
