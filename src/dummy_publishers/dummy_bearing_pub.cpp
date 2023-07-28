@@ -12,6 +12,11 @@
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 
+/**
+ * @brief Main function that publishes a bearing parameter value to the bearing topic
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dummy_bearing_pub");

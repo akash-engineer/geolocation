@@ -12,6 +12,11 @@
 #include "ros/ros.h"
 #include "geometry_msgs/Point.h"
 
+/**
+ * @brief Main function that publishes a moving point to the point topic.
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dummy_pt_pub");

@@ -23,21 +23,41 @@ float elevation = 0;
 float roll = 0;
 float altitude = 0;
 
+/**
+ * @brief Callback function for the elevation topic
+ * 
+ * @param sensor_elv The elevation value
+ */
 void elvCallback(const std_msgs::Float32ConstPtr &sensor_elv)
 {
     elevation = sensor_elv->data;    
 }
 
+/**
+ * @brief Callback function for the bearing topic
+ * 
+ * @param sensor_brng The bearing value
+ */
 void brngCallback(const std_msgs::Float32ConstPtr &sensor_brng)
 {
     bearing = sensor_brng->data;
 }
 
+/**
+ * @brief Callback function for the roll topic
+ * 
+ * @param sensor_roll The roll value
+ */
 void rollCallback(const std_msgs::Float32ConstPtr &sensor_roll)
 {
     roll = sensor_roll->data;
 }
 
+/**
+ * @brief Callback function for the gnss topic
+ * 
+ * @param sensor_gnss The gnss coordinate
+ */
 void gnssCallback(const sensor_msgs::NavSatFixConstPtr &sensor_gnss)
 {
     altitude = sensor_gnss->altitude;

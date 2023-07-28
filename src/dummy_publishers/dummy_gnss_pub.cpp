@@ -12,6 +12,12 @@
 #include "ros/ros.h"
 #include "sensor_msgs/NavSatFix.h"
 
+
+/**
+ * @brief Main function that publishes a GNSS coordinate parameter to the gnss topic
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dummy_gnss_pub");

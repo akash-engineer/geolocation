@@ -16,6 +16,11 @@
 #include <geometry_msgs/Pose.h>
 #include <math.h>
 
+/**
+ * @brief Main function that broadcasts the transform from the base_link to innovusion (and any other child frames)
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char** argv){
     ros::init(argc, argv, "base_tf2_broadcaster");
 

@@ -13,6 +13,11 @@
 #include "geometry_msgs/Point.h"
 #include "visualization_msgs/MarkerArray.h"
 
+/**
+ * @brief Main function that publishes a series of moving points to the marker array topic.
+ * 
+ * @return int Returns 0 if successful
+ */
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dummy_pt_pub");
