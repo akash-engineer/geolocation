@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <inno_sdk/sdk_common/inno_lidar_api.h>
+#include "../../external/lib/inno_sdk/sdk_common/inno_lidar_api.h"
                                   
 int main() {
     std::string LIDAR_IP;

@@ -34,6 +34,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+file(GLOB INNO_SDK_SOURCE_FILES
+    "${PROJECT_SOURCE_DIR}/external/lib/inno_sdk/sdk_common/*.cpp"
+    "${PROJECT_SOURCE_DIR}/external/lib/inno_sdk/sdk_common/*.h")
+
+add_library(inno_sdk ${INNO_SDK_SOURCE_FILES})
+target_include_directories(inno_sdk PRIVATE "${PROJECT_SOURCE_DIR}/external/lib/inno_sdk/include}")
+
 ## Get dependencies
 # Clone csv-parser
 set(CSVPARSER_DIR ${CMAKE_SOURCE_DIR}/geolocation/external/lib/csvparser)
@@ -86,6 +93,10 @@ add_dependencies(bag_gps_merge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 add_executable(bag_csv_merge src/utilities/bag_csv_merge.cpp)
 target_link_libraries(bag_csv_merge ${catkin_LIBRARIES} csv)
 add_dependencies(bag_csv_merge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# add_executable(test_roi_move src/utilities/test_roi_move.cpp)
+# target_link_libraries(test_roi_move ${catkin_LIBRARIES} inno_sdk)
+# add_dependencies(test_roi_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #############
 ## Install ##
