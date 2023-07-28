@@ -29,7 +29,7 @@
     <node name="object3d_detector" pkg="object3d_detector" type="object3d_detector" output="screen" respawn="true" required="true"/>
 
     <!-- Launch Handsfree IMU -->
-    <node name="handsfree_imu" pkg="handsfree_imu" type="handsfree_imu" respawn="true" required="true"/>
+    <node name="handsfree_imu" pkg="handsfree_ros_imu" type="handsfree_imu" respawn="true" required="true"/>
 
     <!-- Launch GPSD -->
 
