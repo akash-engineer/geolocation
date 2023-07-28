@@ -1,8 +1,8 @@
 """@package docstring
 File: geo_publisher.py
 Author: Richard Loong (richardloongcj@gmail.com)
-Description: Read sensor and point coordinates and pose from ROS topics
-             and publish the GNSS coordinates of the point to a ROS topic
+Description: Read sensor and point coordinates and pose from ROS
+topics and publish the GNSS coordinates of the point to a ROS topic
 Version: 1.1.1
 Date: 2023-06-08
 """

@@ -1,3 +1,4 @@
+# pylint: skip-file
 # Configuration file for the Sphinx documentation builder.
 
 import os
@@ -18,7 +19,8 @@ release = '1.0.0'
 
 extensions = [
     "breathe",
-    "sphinx.ext.autodoc"
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     ]
 
 templates_path = ['_templates']

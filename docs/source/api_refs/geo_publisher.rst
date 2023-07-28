@@ -8,4 +8,5 @@ The node caluclates the gnss coordinates of each marker based on the marker's
 position relative to the sensor's position and orientation (assuming the sensor
 is at the frame origin).
 
-Autofunctions temporarily removed due to OOP restructuring.
+.. toctree:: generated/geo_publisher
+
