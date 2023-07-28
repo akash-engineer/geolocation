@@ -9,6 +9,18 @@ This is the documentation for the geolocation package, used in conjunction with 
 `blahblah` package to detect and track unmanned aerial systems (UAS) using a sectorial
 LiDAR sensor.
 
+TL;DR: Run this command to start the full LiDAR system:
+
+.. code-block:: bash
+
+   start_lidar
+
+Run this command to start the package with tunable parameters:
+
+.. code-block:: bash
+
+   roslaunch geolocation live.launch <PARAMS>
+
 To get started, refer to the following resources:
 
 * :ref:`Introduction`
