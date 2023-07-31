@@ -241,7 +241,7 @@ if __name__ == '__main__':
     ## SensorGnss object
     sensor_gnss = SensorGnss()
 
-    rospy.Subscriber(MARKER_ARRAY_TOPIC, sensor_gnss.MarkerArray, sensor_gnss.marker_array_callback)
+    rospy.Subscriber(MARKER_ARRAY_TOPIC, MarkerArray, sensor_gnss.marker_array_callback)
     rospy.Subscriber(GNSS_TOPIC, NavSatFix, sensor_gnss.gnss_callback)
     rospy.Subscriber(BEARING_TOPIC, Float32, sensor_gnss.bearing_callback)
     rospy.Subscriber(ELEVATION_TOPIC, Float32, sensor_gnss.elevation_callback)
