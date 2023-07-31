@@ -7,7 +7,7 @@ Geolocation
 ===========
 This is the documentation for the geolocation package, used in conjunction with the
 `blahblah` package to detect and track unmanned aerial systems (UAS) using a sectorial
-LiDAR sensor.
+LiDAR sensor. 
 
 TL;DR: Run this command to start the full LiDAR system:
 
@@ -37,9 +37,9 @@ For more information, see the following:
    :hidden:
    
    intro
+   tldr
    getting_started
    user_guide
    dev_guide
    api_reference
-   lidar
-   lidar/Introduction
+   

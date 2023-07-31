@@ -11,3 +11,5 @@ This page covers general usage of the whole software package.
    user_guide/rviz_config
    user_guide/params
    user_guide/gps_logger
+   lidar
+   lidar/Introduction

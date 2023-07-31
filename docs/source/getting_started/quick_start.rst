@@ -5,7 +5,7 @@ Quick Start
 
 This is a quick start guide to get you up and running with the
 ``geolocation`` package. Before continuing, make sure the package
-has been installed correctly. See the :ref:`installation` section
+has been installed correctly. See the :ref:`Software Installation` section
 for more information.
 
 .. _Quick Start - Verify Install:
