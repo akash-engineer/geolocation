@@ -33,6 +33,12 @@ The naming scheme for the releases is as follows:
 
 ``ros-[ROS DISTRO]-innovusion-driver-release-[RELEASE]-rc4-[ARCHITECTURE]-public.deb``
 
+The default values that should be used are as follows:
+
+- ROS DISTRO: ``noetic``
+- RELEASE: ``2.8.1``
+- ARCHITECTURE: ``<empty>``
+
 Install the drivers using dpkg.
 
 .. code-block:: bash
