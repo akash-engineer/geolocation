@@ -47,7 +47,7 @@ usually caused by a missing dependency.  Make sure that the `object3d_detector`
 package is installed.
 
 1. Open a terminal and run the commands:
-    .. code-block:: base
+    .. code-block:: bash
 
         rosSource
         wsSource
