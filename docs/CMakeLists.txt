@@ -30,8 +30,10 @@ set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
 # Only regenerate Sphinx when:
 # - Doxygen has rerun
-# - Our doc files have been updated
 # - The Sphinx config has been updated
+#
+# Sphinx will regenerate all files regardless if they have changed or not.
+# This is to ensure the ToC is also updated.
 add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                    COMMAND 
                      ${SPHINX_EXECUTABLE} -a -b html
