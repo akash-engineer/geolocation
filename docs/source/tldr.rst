@@ -28,6 +28,8 @@ Stopping the LiDAR system
 3. Wait for all the programs to close. The last line of the terminal should
    read `done`.
 
+Note: If manually closing the Rviz window, do not save the configuration if prompted.
+
 Troubleshooting
 ---------------
 
