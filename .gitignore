@@ -11,3 +11,8 @@ launch/rosbag-2.bag
 launch/rosbag-3.bag
 include/
 scripts/__pycache__/
+.idea/geolocation.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
