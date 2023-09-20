@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(geolocation)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-add_subdirectory("docs")
+# add_subdirectory("docs")
 
 add_compile_options(-std=c++17)
 
@@ -43,15 +43,16 @@ target_include_directories(inno_sdk PRIVATE "${PROJECT_SOURCE_DIR}/external/lib/
 
 ## Get dependencies
 # Clone csv-parser
-set(CSVPARSER_DIR ${CMAKE_SOURCE_DIR}/geolocation/external/lib/csvparser)
-if(NOT EXISTS ${CSVPARSER_DIR})
-    find_package(Git REQUIRED)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} clone https://github.com/vincentlaucsb/csv-parser.git ${CSVPARSER_DIR}
-    )
-endif()# Add the csv-parser CMake files to the project
-add_subdirectory(${CSVPARSER_DIR})
-include_directories(${CSVPARSER_DIR}/include)
+# set(CSVPARSER_DIR ${CMAKE_SOURCE_DIR}/geolocation/external/lib/csvparser)
+# if(NOT EXISTS ${CSVPARSER_DIR})
+#     find_package(Git REQUIRED)
+#     execute_process(
+#         COMMAND ${GIT_EXECUTABLE} clone https://github.com/vincentlaucsb/csv-parser.git ${CSVPARSER_DIR}
+#     )
+# endif()
+# Add the csv-parser CMake files to the project
+# add_subdirectory(${CSVPARSER_DIR})
+# include_directories(${CSVPARSER_DIR}/include)
 
 ## Dummy Publishers
 add_executable(dummy_pt_pub src/dummy_publishers/dummy_pt_pub.cpp)
@@ -90,9 +91,9 @@ add_executable(bag_gps_merge src/utilities/bag_gps_merge.cpp)
 target_link_libraries(bag_gps_merge ${catkin_LIBRARIES})
 add_dependencies(bag_gps_merge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(bag_csv_merge src/utilities/bag_csv_merge.cpp)
-target_link_libraries(bag_csv_merge ${catkin_LIBRARIES} csv)
-add_dependencies(bag_csv_merge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_executable(bag_csv_merge src/utilities/bag_csv_merge.cpp)
+# target_link_libraries(bag_csv_merge ${catkin_LIBRARIES} csv)
+# add_dependencies(bag_csv_merge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # add_executable(test_roi_move src/utilities/test_roi_move.cpp)
 # target_link_libraries(test_roi_move ${catkin_LIBRARIES} inno_sdk)
